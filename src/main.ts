@@ -1,10 +1,11 @@
 import express from 'express'
 import dotenv from 'dotenv'
-dotenv.config()
+dotenv.config();
 
-import { router as userRouter } from './module/user/user.route'
+import {router as userRouter} from './module/user/user.route'
 
-const app = express()
+const app = express();
+app.use(express.json());
 
 app.use('/user', userRouter);
 
