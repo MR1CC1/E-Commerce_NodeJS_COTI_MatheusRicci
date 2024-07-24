@@ -17,7 +17,7 @@ const login = async (params: AuthInterface): Promise<AuthResponse | null> => {
     }
 
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.SECRET || 'stringqualquerteste', {
-        expiresIn: '1h',
+        expiresIn: '24h',
     });
 
     return {
