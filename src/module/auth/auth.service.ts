@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import { AuthInterface, AuthResponse } from './auth';
-import { UserInterface } from '../user/user';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -32,18 +31,6 @@ const login = async (params: AuthInterface): Promise<AuthResponse | null> => {
     };
 };
 
-const register = async (params: UserInterface): Promise<UserInterface> => {
-    const hashedPassword = await bcrypt.hash(params.password, 10);
-    const result = await prisma.user.create({
-        data: {
-            ...params,
-            password: hashedPassword,
-        },
-    });
-
-    return result;
-};
-
 const verifyToken = (token: string) => {
     try {
         return jwt.verify(token, process.env.SECRET || 'stringqualquerteste');
@@ -54,6 +41,5 @@ const verifyToken = (token: string) => {
 
 export default {
     login,
-    register,
     verifyToken,
 };
