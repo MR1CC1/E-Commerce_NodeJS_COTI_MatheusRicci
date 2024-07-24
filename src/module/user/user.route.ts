@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import userService from "./user.service";
+import authService from "../auth/auth.service";
 import { UserSchema, UserUpdateSchema } from './user.schema';
 import { z } from 'zod';
 
@@ -19,7 +20,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
     try {
         UserSchema.parse(req.body);
-        const result = await userService.store(req.body);
+        const result = await authService.register(req.body);
         return res.json(result);
     } catch (error: unknown) {
         if (error instanceof z.ZodError) {
@@ -93,7 +94,3 @@ router.put('/:id', async (req: Request, res: Response) => {
         });
     }
 });
-
-
-
-

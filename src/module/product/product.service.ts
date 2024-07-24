@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { ProductInterface, ProductUpdate } from './product';
 import { ProductSchema, ProductUpdateSchema } from './product.schema';
-import { z } from 'zod';
 
 const prisma = new PrismaClient();
 

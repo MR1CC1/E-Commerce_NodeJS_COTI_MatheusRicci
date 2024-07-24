@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { CategoryInterface, CategoryUpdate } from './category';
 import { CategorySchema, CategoryUpdateSchema } from './category.schema';
-import { z } from 'zod';
 
 const prisma = new PrismaClient();
 
