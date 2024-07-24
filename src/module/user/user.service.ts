@@ -51,23 +51,10 @@ const update = async (id: number, params: UserUpdate): Promise<UserInterface> =>
     return result;
 };
 
-const setAdminById = async (id: number): Promise<UserInterface> => {
-    const result = await prisma.user.update({
-        where: { id },
-        data: {
-            isAdmin: true,
-        }
-    });
-
-    return result;
-};
-
-
 export default {
     getAll,
     store,
     getById,
     destroy,
-    update,
-    setAdminById
+    update
 };
