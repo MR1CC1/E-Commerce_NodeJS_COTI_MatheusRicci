@@ -1,11 +1,13 @@
 import { Router, Request, Response } from "express";
 import userService from "./user.service";
+import authService from "../auth/auth.service";
 import { UserSchema, UserUpdateSchema } from './user.schema';
 import { z } from 'zod';
+import authMiddleware from '../../middleware/auth.middleware';
 
 export const router = Router();
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', authMiddleware, async (req: Request, res: Response) => {
     try {
         const result = await userService.getAll();
         return res.json(result);
@@ -39,7 +41,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
     try {
         const result = await userService.getById(parseInt(req.params.id, 10));
         return res.json(result);
@@ -55,7 +57,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
     try {
         const result = await userService.destroy(parseInt(req.params.id, 10));
         return res.json(result);
@@ -71,7 +73,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
     try {
         UserUpdateSchema.parse(req.body);
         const result = await userService.update(parseInt(req.params.id, 10), req.body);

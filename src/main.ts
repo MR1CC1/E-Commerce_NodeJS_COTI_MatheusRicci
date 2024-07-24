@@ -12,7 +12,11 @@ const app = express();
 app.use(express.json());
 
 app.use('/auth', authRouter);
-app.use('/user', authMiddleware, userRouter);
+
+// Rota de criação de usuário sem autenticação
+app.use('/user', userRouter);
+
+// Rotas protegidas por autenticação
 app.use('/category', authMiddleware, categoryRouter);
 app.use('/product', authMiddleware, productRouter);
 
