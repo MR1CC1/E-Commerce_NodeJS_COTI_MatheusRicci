@@ -1,99 +1,34 @@
-import { Router, Request, Response } from "express";
-import userService from "./user.service";
-import authService from "../auth/auth.service";
-import { UserSchema, UserUpdateSchema } from './user.schema';
-import { z } from 'zod';
-import authMiddleware from '../../middleware/auth.middleware';
+import { Router, Request, Response } from 'express'
+import userService from './user.service'
+import schemaValidate from '../../middleware/schemaValidate'
+import { userStoreSchema, userUpdateSchema } from './user.schema'
+import authMiddleware from '../../middleware/auth'
 
-export const router = Router();
+const router = Router()
 
-router.get('/', authMiddleware, async (req: Request, res: Response) => {
-    try {
-        const result = await userService.getAll();
-        return res.json(result);
-    } catch (error) {
-        return res.status(500).json({
-            message: `Erro: ${error}`
-        });
-    }
-});
+router.get('/', async (_: Request, res: Response) => {
+  const result = await userService.getAll()
+  return res.json(result)
+})
 
-router.post('/', async (req: Request, res: Response) => {
-    try {
-        UserSchema.parse(req.body);
-        const result = await userService.store(req.body);
-        return res.json(result);
-    } catch (error: unknown) {
-        if (error instanceof z.ZodError) {
-            return res.status(400).json({
-                message: 'Erro de Validação',
-                issues: error.errors
-            });
-        }
-        if (error instanceof Error) {
-            return res.status(400).json({
-                message: `Erro: ${error.message}`
-            });
-        }
-        return res.status(400).json({
-            message: 'Erro Desconhecido'
-        });
-    }
-});
+router.get('/:id', async (req: Request, res: Response) => {
+  const result = await userService.getOne(parseInt(req.params.id, 10))
+  return res.json(result)
+})
 
-router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
-    try {
-        const result = await userService.getById(parseInt(req.params.id, 10));
-        return res.json(result);
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            return res.status(400).json({
-                message: `Erro: ${error.message}`
-            });
-        }
-        return res.status(400).json({
-            message: 'Erro Desconhecido'
-        });
-    }
-});
+router.post('/', schemaValidate(userStoreSchema), async (_: Request, res: Response) => {
+  const result = await userService.store(res.locals.validated)
+  return res.json(result)
+})
 
-router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
-    try {
-        const result = await userService.destroy(parseInt(req.params.id, 10));
-        return res.json(result);
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            return res.status(400).json({
-                message: `Erro: ${error.message}`
-            });
-        }
-        return res.status(400).json({
-            message: 'Erro Desconhecido'
-        });
-    }
-});
+router.put('/:id', schemaValidate(userUpdateSchema), async (req: Request, res: Response) => {
+  const result = await userService.update(parseInt(req.params.id, 10), res.locals.validated)
+  return res.json(result)
+})
 
-router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
-    try {
-        UserUpdateSchema.parse(req.body);
-        const result = await userService.update(parseInt(req.params.id, 10), req.body);
-        return res.json(result);
-    } catch (error: unknown) {
-        if (error instanceof z.ZodError) {
-            return res.status(400).json({
-                message: 'Erro de Validação',
-                issues: error.errors
-            });
-        }
-        if (error instanceof Error) {
-            return res.status(400).json({
-                message: `Erro: ${error.message}`
-            });
-        }
-        return res.status(400).json({
-            message: 'Erro Desconhecido'
-        });
-    }
-});
+router.delete('/:id', async (req: Request, res: Response) => {
+  const result = await userService.destroy(Number(req.params.id))
+  return res.json(result)
+})
 
-export default router;
+export default router

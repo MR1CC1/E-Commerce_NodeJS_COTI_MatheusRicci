@@ -1,6 +1,14 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-export const AuthSchema = z.object({
-    email: z.string().email({ message: "Endereço de Email Inválido!" }),
-    password: z.string().min(6, { message: "A Senha precisa de pelo menos 6 caracteres!" }),
-});
+export const authSchema = z.object({
+  email: z.string({
+    required_error: 'E-mail é obrigatório',
+    invalid_type_error: 'E-mail precisa ser to tipo texto'
+  }).email({
+    message: 'E-mail mal formatado'
+  }),
+  password: z.string({
+    required_error: 'Senha é obrigatória',
+    invalid_type_error: 'Senha precisa ser to tipo texto'
+  })
+})

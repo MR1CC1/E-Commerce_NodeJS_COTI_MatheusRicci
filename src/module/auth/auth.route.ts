@@ -1,29 +1,19 @@
-import { Router, Request, Response } from "express";
-import authService from "./auth.service";
-import { AuthSchema } from './auth.schema';
-import { z } from 'zod';
+import { Router, Request, Response } from 'express'
+import schemaValidate from '../../middleware/schemaValidate'
+import { authSchema } from './auth.schema'
+import authService from './auth.service'
 
-export const router = Router();
+const router = Router()
 
-router.post('/login', async (req: Request, res: Response) => {
-    try {
-        AuthSchema.parse(req.body);
-        const result = await authService.login(req.body);
-        return res.json(result);
-    } catch (error: unknown) {
-        if (error instanceof z.ZodError) {
-            return res.status(400).json({
-                message: 'Erro de Validação',
-                issues: error.errors
-            });
-        }
-        if (error instanceof Error) {
-            return res.status(400).json({
-                message: `Erro: ${error.message}`
-            });
-        }
-        return res.status(400).json({
-            message: 'Erro Desconhecido'
-        });
-    }
-});
+router.post('/login', schemaValidate(authSchema), async (req: Request, res: Response) => {
+  try {
+    const result = await authService.login(res.locals.validated)
+    return res.json(result)
+  } catch (error: any) {
+    return res.status(error.status).json({
+      message: error.message
+    })
+  }
+})
+
+export default router

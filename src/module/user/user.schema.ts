@@ -1,12 +1,16 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
-export const UserSchema = z.object({
-    id: z.number().optional(),
-    name: z.string().min(1, { message: "Nome é Obrigatório" }),
-    email: z.string().email({ message: "Endereço de Email Inválido!" }),
-    password: z.string().min(6, { message: "A Senha precisa de pelo menos 6 caracteres!" }),
-    isAdmin: z.boolean().optional(),
-    createdAt: z.date().optional(),
-});
+export const userStoreSchema = z.object({
+  email: z.string({
+    required_error: 'E-mail é obrigatório',
+    invalid_type_error: 'E-mail precisa ser to tipo texto'
+  }).trim().email({
+    message: 'E-mail mal formatado'
+  }),
+  password: z.string({
+    required_error: 'Senha é obrigatória',
+    invalid_type_error: 'Senha precisa ser to tipo texto'
+  }).trim()
+})
 
-export const UserUpdateSchema = UserSchema.partial();
+export const userUpdateSchema = userStoreSchema.partial()

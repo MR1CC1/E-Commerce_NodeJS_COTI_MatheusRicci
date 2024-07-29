@@ -1,45 +1,37 @@
-import { PrismaClient } from '@prisma/client';
-import { AuthInterface, AuthResponse } from './auth';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken"
+import userService from "../user/user.service"
+import { AuthParams, AuthResponse } from "./auth"
+import { ApiError } from "../../libs/errorHandler"
 
-const prisma = new PrismaClient();
+const login = async (params: AuthParams): Promise<AuthResponse> => {
+  const user = await userService.getByEmail(params.email)
+  if (!user) {
+    throw new ApiError(404, 'Usuário não encontrado')
+  }
 
-const login = async (params: AuthInterface): Promise<AuthResponse | null> => {
-    const user = await prisma.user.findUnique({ where: { email: params.email } });
-    if (!user) {
-        throw new Error('Usuário não encontrado');
-    }
+  if (user.password !== params.password) {
+    // escrito de propósito para caso seja tentativa de força bruta, o hacker não identificar
+    // qual parâmetro está errado
+    throw new ApiError(400, 'Usuário e senha incorretos')
+  }
 
-    const validPassword = await bcrypt.compare(params.password, user.password);
-    if (!validPassword) {
-        throw new Error('Senha inválida');
-    }
-
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.SECRET || 'stringqualquerteste', {
-        expiresIn: '24h',
-    });
+  try {
+    const token = jwt.sign({
+      id: user.id
+    }, process.env.JWT_SECRET || '')
 
     return {
-        user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            isAdmin: user.isAdmin,
-        },
-        token,
-    };
-};
-
-const verifyToken = (token: string) => {
-    try {
-        return jwt.verify(token, process.env.SECRET || 'stringqualquerteste');
-    } catch (error) {
-        throw new Error('Token inválido');
+      token,
+      user: {
+        id: user.id,
+        email: user.email
+      }
     }
-};
+  } catch (error: any) {
+    throw new ApiError(400, 'Falha ao gerar token')
+  }
+}
 
 export default {
-    login,
-    verifyToken,
-};
+  login
+}

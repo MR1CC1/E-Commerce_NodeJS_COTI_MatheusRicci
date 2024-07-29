@@ -1,10 +1,13 @@
-export interface UserInterface {
-    id: number;
-    name: string;
-    email: string;
-    password: string;
-    isAdmin: boolean; 
-    createdAt: Date;  
+import type { User as UserPrisma } from '@prisma/client'
+
+export interface UserBase {
+  email: string
+  password: string
+  isAdmin: boolean
 }
 
-export type UserUpdate = Partial<UserInterface>
+export interface UserStore extends UserBase { }
+
+export type UserUpdate = Partial<UserStore>
+
+export type User = UserPrisma
