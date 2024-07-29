@@ -1,9 +1,9 @@
-// Path: src/module/user/user.route.ts
+// Path: src/module/product/product.route.ts
 
 import { Router, Request, Response, NextFunction } from 'express';
-import userService from './user.service';
+import productService from './product.service';
 import schemaValidate from '../../middleware/schemaValidate';
-import { userStoreSchema, userUpdateSchema } from './user.schema';
+import { productStoreSchema, productUpdateSchema } from './product.schema';
 import authMiddleware from '../../middleware/auth';
 
 const router = Router();
@@ -11,7 +11,7 @@ const router = Router();
 
 router.get('/', async (_: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await userService.getAll();
+    const result = await productService.getAll();
     return res.json(result);
   } catch (error) {
     next(error);
@@ -20,25 +20,25 @@ router.get('/', async (_: Request, res: Response, next: NextFunction) => {
 
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await userService.getOne(parseInt(req.params.id, 10));
+    const result = await productService.getOne(parseInt(req.params.id, 10));
     return res.json(result);
   } catch (error) {
     next(error);
   }
 });
 
-router.post('/', schemaValidate(userStoreSchema), async (_: Request, res: Response, next: NextFunction) => {
+router.post('/', schemaValidate(productStoreSchema), async (_: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await userService.store(res.locals.validated);
+    const result = await productService.store(res.locals.validated);
     return res.json(result);
   } catch (error) {
     next(error);
   }
 });
 
-router.put('/:id', schemaValidate(userUpdateSchema), async (req: Request, res: Response, next: NextFunction) => {
+router.put('/:id', schemaValidate(productUpdateSchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await userService.update(parseInt(req.params.id, 10), res.locals.validated);
+    const result = await productService.update(parseInt(req.params.id, 10), res.locals.validated);
     return res.json(result);
   } catch (error) {
     next(error);
@@ -47,7 +47,7 @@ router.put('/:id', schemaValidate(userUpdateSchema), async (req: Request, res: R
 
 router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await userService.destroy(Number(req.params.id));
+    const result = await productService.destroy(Number(req.params.id));
     return res.json(result);
   } catch (error) {
     next(error);
