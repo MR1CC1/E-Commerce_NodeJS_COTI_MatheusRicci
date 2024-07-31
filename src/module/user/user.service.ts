@@ -1,74 +1,39 @@
-// Path: src/module/user/user.service.ts
-
-import { prisma } from "../../config/db";
-import { UserStore, UserUpdate, User } from "./user";
-import { ApiError } from "../../libs/errorHandler";
+import { prisma } from "../../config/db"
+import { UserStore, UserUpdate, User } from "./user"
 
 const getAll = async (): Promise<User[]> => {
-  return await prisma.user.findMany();
+  return await prisma.user.findMany()
 }
 
-const getOne = async (id: number): Promise<User> => {
-  const user = await prisma.user.findFirst({
-    where: { id },
-  });
-
-  if (!user) {
-    throw new ApiError(404, 'Usuário não encontrado');
-  }
-
-  return user;
+const getOne = async (id: number): Promise<User | null> => {
+  return await prisma.user.findFirst({
+    where: { id }
+  })
 }
 
-const getByEmail = async (email: string): Promise<User> => {
-  const user = await prisma.user.findFirst({
-    where: { email },
-  });
-
-  if (!user) {
-    throw new ApiError(404, 'Usuário não encontrado');
-  }
-
-  return user;
+const getByEmail = async (email: string): Promise<User | null> => {
+  return await prisma.user.findFirst({
+    where: { email }
+  })
 }
 
 const store = async (params: UserStore): Promise<User> => {
-  const existingUser = await prisma.user.findFirst({
-    where: { email: params.email },
-  });
-
-  if (existingUser) {
-    throw new ApiError(400, 'E-mail já cadastrado');
-  }
-
   return await prisma.user.create({
-    data: params,
-  });
+    data: params
+  })
 }
 
 const update = async (id: number, params: UserUpdate): Promise<User> => {
-  const user = await prisma.user.update({
+  return await prisma.user.update({
     where: { id },
-    data: params,
-  });
-
-  if (!user) {
-    throw new ApiError(404, 'Usuário não encontrado');
-  }
-
-  return user;
+    data: params
+  })
 }
 
 const destroy = async (id: number): Promise<User> => {
-  const user = await prisma.user.delete({
-    where: { id },
-  });
-
-  if (!user) {
-    throw new ApiError(404, 'Usuário não encontrado');
-  }
-
-  return user;
+  return await prisma.user.delete({
+    where: { id }
+  })
 }
 
 export default {
@@ -77,5 +42,5 @@ export default {
   getByEmail,
   store,
   update,
-  destroy,
-};
+  destroy
+}

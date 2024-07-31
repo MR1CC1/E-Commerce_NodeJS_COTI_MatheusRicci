@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 import userService from "../user/user.service"
-import { AuthParams, AuthResponse } from "./auth"
+import { AuthParams, AuthResponse, RegisterParams } from "./auth"
 import { ApiError } from "../../libs/errorHandler"
 
 const login = async (params: AuthParams): Promise<AuthResponse> => {
@@ -32,6 +32,21 @@ const login = async (params: AuthParams): Promise<AuthResponse> => {
   }
 }
 
+const register = async (params: RegisterParams) => {
+  const hasUser = await userService.getByEmail(params.email)
+  if (hasUser) {
+    throw new ApiError(400, 'Usuário existente. Favor utilizar outro e-mail.')
+  }
+
+  try {
+    const result = await userService.store(params)
+    return result
+  } catch (error: any) {
+    throw new ApiError(400, 'Falha ao criar usuário')
+  }
+}
+
 export default {
-  login
+  login,
+  register
 }

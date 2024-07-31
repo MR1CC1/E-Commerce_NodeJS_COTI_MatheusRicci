@@ -11,9 +11,8 @@ export class ApiError extends Error {
   }
 }
 
-// Middleware de tratamento de erros
 export const errorHandler = (err: ApiError, req: Request, res: Response, next: NextFunction) => {
-  //console.error(err); // Log do erro para depuração
+  console.error(err); // Log do erro para depuração
   res.status(err.status || 500).json({
     message: err.message || 'Erro interno do servidor',
   });

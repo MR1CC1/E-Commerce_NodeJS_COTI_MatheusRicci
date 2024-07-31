@@ -1,62 +1,33 @@
-// Path: src/module/product/product.service.ts
-
-import { prisma } from "../../config/db";
-import { ProductStore, ProductUpdate, Product } from "./product";
-import { ApiError } from "../../libs/errorHandler";
+import { prisma } from "../../config/db"
+import { ProductStore, ProductUpdate, Product } from "./product"
 
 const getAll = async (): Promise<Product[]> => {
-  return await prisma.product.findMany();
+  return await prisma.product.findMany()
 }
 
-const getOne = async (id: number): Promise<Product> => {
-  const product = await prisma.product.findFirst({
-    where: { id },
-  });
-
-  if (!product) {
-    throw new ApiError(404, 'Produto não encontrado');
-  }
-
-  return product;
+const getOne = async (id: number): Promise<Product | null> => {
+  return await prisma.product.findFirst({
+    where: { id }
+  })
 }
 
 const store = async (params: ProductStore): Promise<Product> => {
-  const existingProduct = await prisma.product.findFirst({
-    where: { name: params.name },
-  });
-  
-  if (existingProduct) {
-    throw new ApiError(400, 'Produto com este nome já existe');
-  }
-
   return await prisma.product.create({
-    data: params,
-  });
+    data: params
+  })
 }
 
 const update = async (id: number, params: ProductUpdate): Promise<Product> => {
-  const product = await prisma.product.update({
+  return await prisma.product.update({
     where: { id },
-    data: params,
-  });
-
-  if (!product) {
-    throw new ApiError(404, 'Produto não encontrado');
-  }
-
-  return product;
+    data: params
+  })
 }
 
 const destroy = async (id: number): Promise<Product> => {
-  const product = await prisma.product.delete({
-    where: { id },
-  });
-
-  if (!product) {
-    throw new ApiError(404, 'Produto não encontrado');
-  }
-
-  return product;
+  return await prisma.product.delete({
+    where: { id }
+  })
 }
 
 export default {
@@ -64,5 +35,5 @@ export default {
   getOne,
   store,
   update,
-  destroy,
-};
+  destroy
+}

@@ -3,7 +3,7 @@ import type { User as UserPrisma } from '@prisma/client'
 export interface UserBase {
   email: string
   password: string
-  isAdmin: boolean
+  isAdmin?: boolean
 }
 
 export interface UserStore extends UserBase { }

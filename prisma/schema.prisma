@@ -12,19 +12,31 @@ model User {
   email    String  @unique
   password String
   isAdmin  Boolean @default(false)
+  Cart     Cart[]
 }
 
 model Category {
-  id        Int     @id @default(autoincrement())
-  name      String  @unique
+  id       Int       @id @default(autoincrement())
+  name     String
   products Product[]
 }
 
 model Product {
-  id        Int     @id @default(autoincrement())
-  name      String
-  price     Float
-  quantity  Int
-  category  Category @relation(fields: [categoryId], references: [id])
+  id         Int      @id @default(autoincrement())
+  name       String
+  price      Int
+  qtd        Int
+  Category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
+  Cart       Cart[]
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  User      User     @relation(fields: [userId], references: [id], onUpdate: NoAction)
+  userId    Int
+  Product   Product  @relation(fields: [productId], references: [id], onUpdate: NoAction)
+  productId Int
+  qtd       Int
+  createdAt DateTime
 }
